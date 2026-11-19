@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>...</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Jua&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
+  <!-- Three.js & GSAP -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <!-- Canvas Confetti -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+</head>
+<body>
+  <!-- 3D Canvas -->
+  <div id="canvas-container"></div>
+
+  <!-- Minimal UI Overlay -->
+  <div id="ui-overlay">
+    <!-- Top Bar: Only Evolution Gauge and Boss Key -->
+    <header class="top-bar">
+      <!-- 10,000 Clicks Evolution Gauge -->
+      <div id="evolution-container" class="evolution-container" title="클릭 시 +1,000 테스트">
+        <div class="evolution-header">
+          <div class="evolution-title-wrap">
+            <span class="evolution-icon">🧬</span>
+            <span id="evolution-stage" class="evolution-badge">Lv.1</span>
+          </div>
+          <span class="evolution-count"><strong id="click-count">0</strong> / 10,000</span>
+        </div>
+        <div class="evolution-track">
+          <div id="evolution-fill" class="evolution-fill" style="width: 0%;"></div>
+        </div>
+      </div>
+
+      <!-- Boss Key Button -->
+      <button id="btn-boss" class="ui-btn boss-btn" title="위장 모드 (ESC 또는 Space)">
+        <span class="icon">👀</span> <span class="label">위장 모드 (ESC)</span>
+      </button>
+    </header>
+
+    <!-- Long-press Charging Indicator Circle -->
+    <div id="charge-indicator" class="charge-indicator hidden">
+      <svg class="charge-svg" viewBox="0 0 100 100">
+        <circle class="charge-bg" cx="50" cy="50" r="42"></circle>
+        <circle id="charge-progress" class="charge-bar" cx="50" cy="50" r="42"></circle>
+      </svg>
+    </div>
+  </div>
+
+  <!-- Jumpscare Overlay (FNAF Foxy Style Flash - Only on 30 rapid rage clicks) -->
+  <div id="jumpscare-overlay" class="jumpscare-overlay hidden">
+    <div class="glitch-screen"></div>
+    <div class="foxy-jumpscare-container">
+      <div class="foxy-silhouette">
+        <svg class="foxy-svg" viewBox="0 0 500 500">
+          <path d="M150,120 L80,30 L170,80 Z" fill="#b32400" />
+          <path d="M350,120 L420,30 L330,80 Z" fill="#b32400" />
+          <polygon points="100,50 120,80 80,80" fill="#ff751a" />
+          <polygon points="400,50 420,80 380,80" fill="#ff751a" />
+          <ellipse cx="250" cy="230" rx="150" ry="120" fill="#cc2900" />
+          <circle cx="190" cy="190" r="32" fill="#111" />
+          <path d="M140,160 Q190,190 230,200" stroke="#111" stroke-width="12" fill="none" />
+          <circle cx="310" cy="190" r="32" fill="#ffff00" filter="drop-shadow(0 0 15px #ffff00)" />
+          <circle cx="310" cy="190" r="14" fill="#ff0000" />
+          <ellipse cx="250" cy="270" rx="90" ry="60" fill="#ff5c33" />
+          <polygon points="230,240 270,240 250,265" fill="#111" />
+          <path d="M160,300 Q250,440 340,300 Z" fill="#3a0500" stroke="#111" stroke-width="8" />
+          <polygon points="180,300 195,335 210,300" fill="#fff" />
+          <polygon points="215,300 230,340 245,300" fill="#fff" />
+          <polygon points="255,300 270,340 285,300" fill="#fff" />
+          <polygon points="290,300 305,335 320,300" fill="#fff" />
+          <polygon points="190,370 205,335 220,370" fill="#fff" />
+          <polygon points="230,385 245,340 260,385" fill="#fff" />
+          <polygon points="275,375 290,340 305,375" fill="#fff" />
+        </svg>
+      </div>
+      <h1 id="jumpscare-title" class="jumpscare-text">그만하세요!!</h1>
+    </div>
+  </div>
+
+  <!-- Stealth Study Notes Overlay (위장 화면) -->
+  <div id="stealth-screen" class="stealth-screen hidden">
+    <div class="stealth-window">
+      <div class="stealth-header">
+        <span class="dot red"></span>
+        <span class="dot yellow"></span>
+        <span class="dot green"></span>
+        <span class="stealth-title">2026-2학기_핵심_수업_정리노트.docx</span>
+        <button id="btn-exit-stealth" class="stealth-exit-btn">돌아가기 (ESC)</button>
+      </div>
+      <div class="stealth-content">
+        <h2>[제 4장: 생체 신호와 신경계의 자율 조절 메커니즘]</h2>
+        <p class="meta">작성일: 2026년 11월 19일 | 과목: 인체생리학 및 AI 융합 탐구</p>
+        <hr>
+        <h3>1. 각성(Arousal)과 교감신경계의 상호작용</h3>
+        <p>수업 및 장시간 학습 상황에서 뇌의 망상계(Reticular Activating System)의 자극 저하는 자연스러운 졸음과 주의력 분산을 유발한다. 이를 해결하기 위해 감각 운동 피질을 일시적으로 활성화하는 미세 자극(Tactile & Visual Interactions)이 효과적으로 작용할 수 있다.</p>
+        
+        <h3>2. 시각 추적 피드백에 의한 주의 집중력 강화</h3>
+        <ul>
+          <li><strong>안구 운동 활성화(Saccadic Eye Movement):</strong> 동적인 객체를 추적함으로써 시각 피질의 혈류량 증가 유도</li>
+          <li><strong>소근육 미세 조작(Fine Motor Skills):</strong> 마우스 조작을 통한 손가락 및 손목 움직임이 중추신경계 각성에 기여</li>
+          <li><strong>도파민 및 긍정적 정서 반응:</strong> 의인화된 캐릭터와의 즉각적인 감정 교류가 스트레스 완화 및 학습 피로도 경감에 긍정적 효과를 제공함</li>
+        </ul>
+
+        <blockquote>
+          "단 15초의 능동적 상호작용만으로도 둔화된 인지 반응 속도를 약 23% 개선할 수 있다는 연구 결과가 제시됨."
+        </blockquote>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
